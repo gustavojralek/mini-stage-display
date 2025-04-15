@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Stage Display</title>
+    <style>
+        body {
+            background: black;
+            color: lime;
+            font-family: sans-serif;
+            text-align: center;
+            padding-top: 10vh;
+        }
+        h1, h2 {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1 id="current">Cargando...</h1>
+<h2 id="next"></h2>
+<p id="msg"></p>
+
+<script>
+    async function fetchData() {
+        try {
+            const res = await fetch('/data');
+            const data = await res.json();
+            document.getElementById('current').innerText = data.current;
+            document.getElementById('next').innerText = 'Siguiente: ' + data.next;
+            document.getElementById('msg').innerText = data.message;
+        } catch (err) {
+            document.getElementById('current').innerText = '[Error al cargar datos]';
+        }
+    }
+
+    fetchData();
+    setInterval(fetchData, 500);
+</script>
+</body>
+</html>
