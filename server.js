@@ -1,12 +1,11 @@
 const express = require('express');
 const axios = require('axios');
+const fs = require('fs');
 const path = require('path');
 
+const PRO_API = fs.readFileSync(path.join(__dirname, 'config'), 'utf-8').trim();
 const app = express();
 const PORT = 3000;
-
-// Reemplazá con la IP real de tu Mac y el puerto que te muestra ProPresenter
-const PRO_API = 'http://localhost:58663/v1';
 
 app.use(express.static(path.join(__dirname, 'public')));
 
