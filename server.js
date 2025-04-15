@@ -3,7 +3,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-const PRO_API = fs.readFileSync(path.join(__dirname, 'config'), 'utf-8').trim();
+const PRO_API = fs.readFileSync(path.join(__dirname, 'endpoint'), 'utf-8').trim();
 const app = express();
 const PORT = 3000;
 
