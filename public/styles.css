@@ -1,0 +1,78 @@
+body {
+    background: black;
+    color: white;
+    font-family: 'Helvetica Neue', sans-serif;
+    margin: 0;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#clock {
+    font-size: 4em;
+    margin-bottom: 1em;
+    width: 100%;
+    text-align: center;
+}
+
+#current {
+    font-size: 3em;
+    text-align: left;
+    width: 80%;
+    max-width: 1200px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#next {
+    width: 80%;
+    max-width: 1200px;
+}
+
+.next-box {
+    background: #222;
+    border-left: 5px solid #888;
+    padding: 1em;
+    margin-top: 1em;
+}
+
+.next-label {
+    font-size: 1em;
+    font-weight: bold;
+    color: #aaa;
+    margin-bottom: 0.3em;
+    text-transform: uppercase;
+}
+
+.next-text {
+    font-size: 1.6em;
+    color: #ccc;
+}
+
+#msg {
+    font-size: 1.2em;
+    color: yellow;
+    margin-bottom: 1em;
+    width: 80%;
+    max-width: 1200px;
+    text-align: left;
+}
+
+#qrcode canvas {
+    background: white;
+    padding: 4px;
+    border-radius: 6px;
+}
+
+#qrcode {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}

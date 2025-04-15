@@ -1,85 +1,33 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Stage Display</title>
-    <style>
-      body {
-        background: black;
-        color: white;
-        font-family: 'Helvetica Neue', sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden;
-      }
-
-      #clock {
-        font-size: 4em;
-        margin-top: 1em;
-      }
-
-      #current {
-        font-size: 3em;
-        text-align: center;
-        margin: 0 2em;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #next {
-        font-size: 1.5em;
-        color: #888;
-        margin-bottom: 0.5em;
-      }
-
-      #msg {
-        font-size: 1.2em;
-        color: yellow;
-        margin-bottom: 1em;
-      }
-
-      #qrcode {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-      }
-
-      #qrcode canvas {
-        background: white;
-        padding: 4px;
-        border-radius: 6px;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div id="clock">--:--</div>
-<div id="current">Cargando...</div>
+<div id="current">Loading...</div>
 <div id="next"></div>
 <div id="msg"></div>
-
-<!-- QR abajo a la izquierda -->
 <div id="qrcode"></div>
 
-<!-- Librería QRious para generar el código QR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-
 <script>
     async function fetchData() {
         try {
             const res = await fetch('/data');
             const data = await res.json();
             document.getElementById('current').innerText = data.current;
-            document.getElementById('next').innerText = 'Siguiente: ' + data.next;
+            document.getElementById('next').innerHTML = `
+          <div class="next-box">
+            <div class="next-label">Next</div>
+            <div class="next-text">${data.next}</div>
+          </div>
+        `;
             document.getElementById('msg').innerText = data.message;
         } catch (err) {
-            document.getElementById('current').innerText = '[Error al cargar datos]';
+            document.getElementById('current').innerText = '[Error loading data]';
         }
     }
 
@@ -90,12 +38,9 @@
         document.getElementById('clock').innerText = `${h}:${m}`;
     }
 
-    // Generar el QR con la URL actual
     window.addEventListener('DOMContentLoaded', () => {
-        const qrContainer = document.getElementById('qrcode');
-
         const canvas = document.createElement('canvas');
-        qrContainer.appendChild(canvas);
+        document.getElementById('qrcode').appendChild(canvas);
 
         new QRious({
             element: canvas,
@@ -105,12 +50,11 @@
             foreground: 'black'
         });
 
-        console.log('✅ QR generado para:', window.location.href);
+        fetchData();
+        updateClock();
+        setInterval(fetchData, 1000);
+        setInterval(updateClock, 1000);
     });
-    fetchData();
-    updateClock();
-    setInterval(fetchData, 1000);
-    setInterval(updateClock, 1000);
 </script>
 </body>
 </html>
