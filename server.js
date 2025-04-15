@@ -6,21 +6,23 @@ const app = express();
 const PORT = 3000;
 
 // Reemplazá con la IP real de tu Mac y el puerto que te muestra ProPresenter
-const PRO_API = 'http://192.168.0.123:58663/v1';
+const PRO_API = 'http://localhost:58663/v1';
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/data', async (req, res) => {
     try {
-        const pres = await axios.get(`${PRO_API}/presentation/active`);
-        const msg = await axios.get(`${PRO_API}/stage/message`);
+        const slideStatus = await axios.get(`${PRO_API}/status/slide?chunked=false`);
+        const current = slideStatus.data.current?.text || '[VACÍO]';
+        const next = slideStatus.data.next?.text || '[—]';
 
-        const current = pres.data.presentation.currentSlide?.text || '[VACÍO]';
-        const next = pres.data.presentation.nextSlide?.text || '[—]';
-        const message = msg.data?.message || '';
+        const msgResp = await axios.get(`${PRO_API}/stage/message`);
+        const message = msgResp.data?.message || '';
+        console.log('Mensaje de Stage:', message);
 
         res.json({ current, next, message });
     } catch (e) {
+        console.error('ERROR:', e.message);
         res.json({ current: '[Error]', next: '[Error]', message: e.message });
     }
 });

@@ -4,22 +4,71 @@
     <meta charset="UTF-8">
     <title>Stage Display</title>
     <style>
-        body {
-            background: black;
-            color: lime;
-            font-family: sans-serif;
-            text-align: center;
-            padding-top: 10vh;
-        }
-        h1, h2 {
-            margin: 20px;
-        }
+      body {
+        background: black;
+        color: white;
+        font-family: 'Helvetica Neue', sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      #clock {
+        font-size: 4em;
+        margin-top: 1em;
+      }
+
+      #current {
+        font-size: 3em;
+        text-align: center;
+        margin: 0 2em;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #next {
+        font-size: 1.5em;
+        color: #888;
+        margin-bottom: 0.5em;
+      }
+
+      #msg {
+        font-size: 1.2em;
+        color: yellow;
+        margin-bottom: 1em;
+      }
+
+      #qrcode {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+      }
+
+      #qrcode canvas {
+        background: white;
+        padding: 4px;
+        border-radius: 6px;
+      }
     </style>
 </head>
 <body>
-<h1 id="current">Cargando...</h1>
-<h2 id="next"></h2>
-<p id="msg"></p>
+<div id="clock">--:--</div>
+<div id="current">Cargando...</div>
+<div id="next"></div>
+<div id="msg"></div>
+
+<!-- QR abajo a la izquierda -->
+<div id="qrcode"></div>
+
+<!-- Librería QRious para generar el código QR -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
 <script>
     async function fetchData() {
@@ -34,8 +83,34 @@
         }
     }
 
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('clock').innerText = `${h}:${m}`;
+    }
+
+    // Generar el QR con la URL actual
+    window.addEventListener('DOMContentLoaded', () => {
+        const qrContainer = document.getElementById('qrcode');
+
+        const canvas = document.createElement('canvas');
+        qrContainer.appendChild(canvas);
+
+        new QRious({
+            element: canvas,
+            value: window.location.href,
+            size: 100,
+            background: 'white',
+            foreground: 'black'
+        });
+
+        console.log('✅ QR generado para:', window.location.href);
+    });
     fetchData();
-    setInterval(fetchData, 500);
+    updateClock();
+    setInterval(fetchData, 1000);
+    setInterval(updateClock, 1000);
 </script>
 </body>
 </html>
