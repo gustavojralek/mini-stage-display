@@ -1,31 +1,30 @@
 const express = require('express');
 const axios = require('axios');
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
 
-const PRO_API = fs.readFileSync(path.join(__dirname, 'endpoint'), 'utf-8').trim();
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8'));
+const API_BASE = `${config.endpoint}:${config.port}/v1`;
+
 const app = express();
-const PORT = 3000;
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/data', async (req, res) => {
     try {
-        const slideStatus = await axios.get(`${PRO_API}/status/slide?chunked=false`);
-        const current = slideStatus.data.current?.text || '[VACÍO]';
-        const next = slideStatus.data.next?.text || '[—]';
+        const slideRes = await axios.get(`${API_BASE}/status/slide?chunked=false`);
+        const current = slideRes.data.current?.text || '[EMPTY]';
+        const next = slideRes.data.next?.text || '[—]';
 
-        const msgResp = await axios.get(`${PRO_API}/stage/message`);
-        const message = msgResp.data?.message || '';
-        console.log('Mensaje de Stage:', message);
+        const messageRes = await axios.get(`${API_BASE}/stage/message`);
+        const message = messageRes.data?.message || '';
 
         res.json({ current, next, message });
-    } catch (e) {
-        console.error('ERROR:', e.message);
-        res.json({ current: '[Error]', next: '[Error]', message: e.message });
+    } catch (err) {
+        console.error('ERROR:', err.message);
+        res.json({ current: '[Error]', next: '[Error]', message: err.message });
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Mini Stage Display corriendo en http://localhost:${PORT}`);
+app.listen(3000, () => {
+    console.log('Mini Stage Display running at http://localhost:3000');
 });
