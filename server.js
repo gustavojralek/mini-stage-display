@@ -2,6 +2,19 @@ const express = require('express');
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
+
+function getLocalIPAddress() {
+    const interfaces = os.networkInterfaces();
+    for (let name in interfaces) {
+        for (let iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return 'localhost';
+}
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8'));
 const API_BASE = `${config.endpoint}:${config.port}/v1`;
@@ -25,6 +38,8 @@ app.get('/data', async (req, res) => {
     }
 });
 
+const ip = getLocalIPAddress();
+console.log(`Mini Stage Display running at http://${ip}:3000`);
+
 app.listen(3000, () => {
-    console.log('Mini Stage Display running at http://localhost:3000');
 });
